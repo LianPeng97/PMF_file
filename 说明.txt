@@ -1,0 +1,46 @@
+################
+#        体系构建       #
+################
+
+为了方便查看牵引距离，需要在体系中引入一个固定的“哑原子”，名为NB原子。niubi
+####改自NA原子。将NA原本的原子类型SOD变为SOD2。####
+
+构型：nb.gro或者nb.pdb
+拓扑文件：nb.itp
+
+！！注意，由于NB原子的原子类型是认为加入的，所以在标准的charmm36-mar2109版本中不存在该原子类型。
+！！因此需要使用charmm36-aug2020.ff力场，在里面的atomtypes.atp和ffnobonded.itp文件里添加了SOD2原子类型。
+
+@@itp中NB哑原子的电荷设置为0，@@ffnobonded.itp中非键相互作用参数全部设置为0。
+这样就相当于是一个与外界没有任何相互作用的参考原子。只当做一个判断牵引距离的参考点。
+
+
+################
+#        牵引动力学    #
+################
+
+牵引动力学过程，也成为SMD过程。需要使用pull.mdp文件，使分子从初始点开始被连续地牵引到指定位置
+由于使用固定速度和参考原子，所以不需要使用distances.pl脚本。直接在输出的pull_pullx.xvg中查看。
+
+输出的pull.trr文件，使用gmx trjconv -f pull.trr -s pull.tpr -o XXX/conf.gro -sep   选择group 0，也就是整个system。
+####    注:XXX代表在当前目录下建立了一个新的文件夹，名字为XXX，将输出的几百帧构型存在改目录下。
+
+
+
+################
+#        伞形采样       #
+################
+
+使用setupUmbrella.py 脚本生成一系列运行文件，例如  frame-0_run-umbrella.sh
+需要按照格式生成一份名为  summary_distances.dat 的文件
+注意：猜测该文件中的第一列数字应为整数，应该为选择相应的confXX提供信息。
+
+setupUmbrella.py summary_distances.dat 0.2 run-umbrella.sh &> caught-output.txt
+
+需要在linux系统下运行，0.2为选用的距离间隔
+
+使用caught-output.txt作为输入文件有python脚本生成job.sh文件时，
+#####需要将caught-output.txt文件中下面的空行删掉，否则会出现错误！！！！
+
+
+

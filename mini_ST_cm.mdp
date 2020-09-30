@@ -1,0 +1,50 @@
+; Run control
+integrator               = steep 
+define                   = -DFLEXIBLE
+nsteps                   = 50000
+; EM criteria and other stuff
+emtol                    = 50
+emstep                   = 0.01
+niter                    = 20
+nbfgscorr                = 10
+; Output control
+nstlog                   = 10
+nstenergy                = 10
+; Neighborsearching and short-range nonbonded interactions
+cutoff-scheme            = verlet
+nstlist                  = 40
+ns_type                  = grid
+pbc                      = xyz
+rlist                    = 1.2
+; Electrostatics
+coulombtype              = PME
+rcoulomb                 = 1.2
+; van der Waals
+vdwtype                  = cutoff
+vdw-modifier             = Force-switch
+rvdw-switch              = 1.0
+rvdw                     = 1.2
+; not Apply long range dispersion corrections for Energy and Pressure
+DispCorr                  = no
+; Spacing for the PME/PPPM FFT grid
+fourierspacing           = 0.10
+
+; EWALD/PME/PPPM parameters
+pme_order                = 4   ;cubic interpolation,[but GPU only support pme order =4],6/8/10 for bingxing.
+ewald_rtol               = 1e-06
+epsilon_surface          = 0
+
+; Temperature and pressure coupling are off during EM
+tcoupl                   = no
+pcoupl                   = no
+
+; No velocities during EM 
+gen_vel                  = no 
+; options for bonds
+constraints              = h-bonds  ; we only have C-H bonds here
+; Type of constraint algorithm
+constraint-algorithm     = lincs
+; Do not constrain the starting configuration
+continuation             = no
+; Highest order in the expansion of the constraint coupling matrix
+lincs-order              = 8
